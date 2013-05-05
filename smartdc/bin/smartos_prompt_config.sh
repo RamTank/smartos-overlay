@@ -270,7 +270,7 @@ promptpool()
   while [[ /usr/bin/true ]]; do
     echo "Please select disks for the storage pool, space separated"
     echo ""
-    printf "Valid choices are ${disks}"
+    printf "Valid choices are ${disks}. Enter 'all' for all."
     echo ""
     bad=""
     read val
@@ -278,6 +278,9 @@ promptpool()
       echo "At least one disk must be specified"
       echo ""
       continue
+    fi
+    if [[ $val == "all" ]]; then
+	  val=${disks}
     fi
     for disk in $(echo $val | tr " " "\n"); do
       if [[ -z $disk ]]; then continue; fi;
@@ -417,8 +420,12 @@ create_zpool()
              profile="";;
         2)
              profile=mirror;;
-        *)
+        [3-5])
              profile=raidz;;
+        [6-7])
+             profile=raidz2;;
+        *)
+             profile=raidz3;;
         esac
     fi
 
